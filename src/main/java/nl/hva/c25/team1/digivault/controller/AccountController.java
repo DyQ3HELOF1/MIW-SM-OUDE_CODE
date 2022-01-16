@@ -1,7 +1,6 @@
 package nl.hva.c25.team1.digivault.controller;
 
 import nl.hva.c25.team1.digivault.model.Account;
-import nl.hva.c25.team1.digivault.model.Klant;
 import nl.hva.c25.team1.digivault.service.AccountService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,18 +22,18 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-//    @PostMapping("/accounts")
-//    public Account bewaarAccount(@RequestBody Account account) {return accountService.bewaarAccountMetSK(account);}
+    @PostMapping("/accounts")
+    public Account bewaarAccount(@RequestBody Account account) {return accountService.bewaarAccountMetSK(account);}
 
-    @PostMapping("/accounts/{klantId}")
-    public void updateAccount(@RequestBody Klant klant) {
-        accountService.updateAccount(klant);
+    @PostMapping("/accounts/{accountId}")
+    public void updateAccount(@RequestBody Account account) {
+        accountService.updateAccount(account);
     }
 
-//    @GetMapping("/accounts/{accountId}")
-//    public Account geefAccountOpAccountId(@PathVariable int accountId) {
-//        return accountService.vindAccountOpAccountId(accountId);
-//    }
+    @GetMapping("/accounts/{accountId}")
+    public Account geefAccountOpAccountId(@PathVariable int accountId) {
+        return accountService.vindAccountOpAccountId(accountId);
+    }
 
     @GetMapping("/accounts")
     public List<Account> geefAccountsHandler() {

@@ -1,33 +1,31 @@
 package nl.hva.c25.team1.digivault.model;
 
-import java.util.List;
-
 /**
  * Author Nienke
  * Version 14-12-2021
  */
 
-public class Bank extends TransactiePartij {
+public class Bank {
+    private int bankId;
     private String bankNaam;
     private double transactiePercentage;
 
-    private Bank(int bankId, Rekening rekening, List<PortefeuilleItem> portefeuille, String bankNaam,
-                double transactiePercentage) {
-        super(bankId, rekening, portefeuille);
+    public Bank(int bankId, String bankNaam, double transactiePercentage) {
+        this.bankId = bankId;
         this.bankNaam = bankNaam;
         this.transactiePercentage = transactiePercentage;
     }
 
-    public Bank(int bankId, String bankNaam, double transactiePercentage) {
-        this(bankId, null, null, bankNaam, transactiePercentage);
-    }
-
     public Bank(String bankNaam, double transactiePercentage) {
-        this(0, bankNaam, transactiePercentage);
+        this(0,bankNaam,transactiePercentage);
     }
 
-    public Bank(int bankId) {
-        this(bankId, "", 0);
+    public int getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(int bankId) {
+        this.bankId = bankId;
     }
 
     public String getBankNaam() {
@@ -49,9 +47,9 @@ public class Bank extends TransactiePartij {
     @Override
     public String toString() {
         return "Bank{" +
+                "bankId=" + bankId +
                 ", bankNaam='" + bankNaam + '\'' +
                 ", transactiePercentage=" + transactiePercentage +
                 '}';
     }
-
 }

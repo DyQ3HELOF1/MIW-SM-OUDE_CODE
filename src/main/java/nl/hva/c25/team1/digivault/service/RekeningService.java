@@ -6,8 +6,6 @@ import nl.hva.c25.team1.digivault.model.Rekening;
 import nl.hva.c25.team1.digivault.model.Transactie;
 import nl.hva.c25.team1.digivault.repository.JdbcRekeningDAO;
 import nl.hva.c25.team1.digivault.repository.RootRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,14 +15,20 @@ import java.util.List;
  * @author Sezi, studentnummer 500889525
  * @version 1-12-2021
  */
-@Service
+
 public class RekeningService {
 
     private JdbcRekeningDAO jdbcRekeningDAO;
+    //    private RootRepository rootRepository;
+    private TransactieService transactieService;
+    private Object Bank;
+    private Bank bank;
 
-    @Autowired
-    public RekeningService(JdbcRekeningDAO rekeningDAO) {
+    public RekeningService(JdbcRekeningDAO rekeningDAO/*, RootRepository rootRepository*/, TransactieService transactieService, Bank bank) {
         this.jdbcRekeningDAO = rekeningDAO;
+//        this.rootRepository = rootRepository;
+        this.transactieService = transactieService;
+        this.bank = bank;
     }
 
     public void bewaarRekening(Rekening rekening) {
@@ -41,6 +45,7 @@ public class RekeningService {
     }
 
     public Rekening vindRekeningOpIBAN(String IBAN) {
+
         return jdbcRekeningDAO.vindRekeningOpIBAN(IBAN);
     }
 
@@ -49,7 +54,29 @@ public class RekeningService {
     }
 
     public List<Rekening> geefAlleRekeningen() {
+
         return jdbcRekeningDAO.geefAlleRekeningen();
     }
 
+    public void verlaagRekening(Transactie transactie) {
+        double voorSaldoKoper = transactie.getKoper().getRekening().getSaldo();
+        double transactieWaarde = transactieService.berekenWaardeTransactie(transactie);
+        if (transactie.getVerkoper().getClass() == Bank) {
+            transactie.getKoper().getRekening().setSaldo(voorSaldoKoper - transactieWaarde -
+                    transactieWaarde * bank.getTransactiePercentage());
+        } else {
+            transactie.getKoper().getRekening().setSaldo(voorSaldoKoper - transactieWaarde);
+        }
+    }
+
+    public void verhoogRekening(Transactie transactie) {
+        double voorSaldoVerkoper = transactie.getVerkoper().getRekening().getSaldo();
+        double transactieWaarde = transactieService.berekenWaardeTransactie(transactie);
+        if (transactie.getKoper().getClass() == Bank) {
+            transactie.getVerkoper().getRekening().setSaldo(voorSaldoVerkoper + transactieWaarde -
+                    transactieWaarde * bank.getTransactiePercentage());
+        } else {
+            transactie.getVerkoper().getRekening().setSaldo(voorSaldoVerkoper + transactieWaarde);
+        }
+    }
 }

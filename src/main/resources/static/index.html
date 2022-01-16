@@ -1,121 +1,26 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
     <head>
-        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>DIGIVAULT - sterrenstatus by default</title>
-        <link rel="icon" type="image/x-icon" href="images/favicon.png">
-        <link rel="stylesheet" href="css/style.css">
-        <!-- algemeen javascript -->
-        <script defer src="js/loginScript.js"></script>
-        <script defer src="js/registratie.js"></script>
+        <meta charset="UTF-8">
+        <title>DIGIVAULT</title>
+        <link href="css/style.css" rel="stylesheet">
+        <script src="script.js"></script>
     </head>
-
     <body>
-
-    <!-- Opzet logo-->
-    <img id="welkomsAanbieding" src="images/welkomsAanbieding.png" alt="reclame voor registratie">
-
-    <!-- Opzet logo-->
-    <img id="logoDigivault" src="images/logoDigivault.png" alt="logo van Digivault">
-
-    <!-- Opzet loginPagina -->
-    <div id = "loginPagina" class="standaard loginPagina">
-        <img class="avatar" alt="Diva-avatar" src="images/diva_avatar.jpg">
-        <h1>Inloggen</h1>
+    <a href="index.html"><img src="images/Logo_white_arrow_noBackGR.png" height="250" width="500"></a>
+    <div class="loginbox">
+        <img src="https://media2.fdncms.com/orlando/imager/u/original/4586792/valentina.jpg" class="avatar" width="100" height="100">
+        <h1> Login Here</h1>
         <form>
-            <p>E-mailadres</p>
-            <input id="email_login" name="email_login" placeholder="e-mailadres" title="vul je e-mailadres in"
-                   required="" type="email">
-            <p>Wachtwoord</p>
-            <input id="wachtwoord_login" name="wachtwoord_login" placeholder="wachtwoord" title="vul je wachtwoord in"
-                   required="" type="password">
-            <input id="login" name="login" type="submit" value="Login">
-            <a id="naarWachtwoordVergeten" href="#">Wachtwoord vergeten?</a> <br>
-            <a id="naarRegistreren" href="#">Registreren?</a>
+            <p> Username </p>
+            <input type = "text" name="" placeholder="Enter Username">
+            <p>Password</p>
+            <input type="password" name="" placeholder="Enter Password">
+            <input type="submit" name="" value="Login">
+            <a href="#"> Wacchtwoord vergeten?</a> <br>
+            <a href="#"> Registreren? </a>
         </form>
     </div>
-
-    <!-- Opzet wachtwoordVergeten -->
-    <div id= "wachtwoordVergetenLaag" class="standaard wachtwoordVergeten">
-        <img class="avatar" alt="Ooops" src="images/oops1.jpg">
-        <h1>Wachtwoord vergeten?</h1>
-        <form name="registratieFormulier">
-            <p>E-mailadres</p>
-            <input id="email_login1" name="email_login" placeholder="e-mailadres" title="vul je e-mailadres in"
-                   required="" type="email">
-            <p>nieuw wachtwoord</p>
-            <input id="wachtwoord_nieuw" name="wachtwoord_nieuw" placeholder="nieuw wachtwoord" title="vul je wachtwoord in"
-                   required="" type="password">
-            <p>wachtwoord herhalen</p>
-            <input id="wachtwoord_herhaal" name="wachtwoord_herhaal" placeholder="herhaal wachtwoord" title="vul je wachtwoord in"
-                   required="" type="password">
-            <input id="veranderWachtwoord" name="verander" type="submit" value="Verander!">
-            <a id="naarLoginPagina" href="#">Inloggen?</a> <br>
-            <a id="naarRegistreren1" href="#">Registreren?</a>
-        </form>
-    </div>
-
-    <!-- Opzet registratieLaag -->
-    <div id="registratieLaag" class="standaard registratieLaag">
-        <img class="avatar" alt="registratie-avatar" src="images/registratie_avatar.jpg">
-        <h1>Registreren</h1>
-        <pre id="infoInvullen">Vul hieronder je gegevens in en loop binnen als DIVA!  Velden met een sterretje zijn verplicht</pre>
-        <pre id="foutMeldingRegistratie"></pre>
-        <form id="registratieFormulier">
-            <div class="grid_4">
-                <p class="registratie">Inloggegevens:</p>
-                <input id="email_reg" name="email_reg" placeholder="e-mailadres *" title="vul een geldig e-mailadres in"
-                       required="" type="email">
-                <input id="wachtwoord_reg" maxlength="65" minlength="10" name="wachtwoord_reg"
-                       placeholder="wachtwoord *" title="je wachtwoord (10 tot 65 tekens)" required="" type="password">
-                <input id="wachtwoord_check" maxlength="65" minlength="10" name="wachtwoord_check"
-                       placeholder="wachtwoord (check) *" title="herhaal je wachtwoord" required="" type="password">
-                <p class="registratie">Persoonsgegevens: </p>
-                <input id="voornaam" name="voornaam" placeholder="voornaam *" title="je voornaam" required=""
-                       type="text">
-                <input id="tussenvoegsel" name="tussenvoegsel" placeholder="tussenvoegsel" maxlength="15"
-                       title="je eventuele tussenvoegsel" type="text">
-                <input id="achternaam" name="achternaam" placeholder="achternaam *" title="je achternaam" required=""
-                       type="text">
-                <br>
-                <input id="geboortedatum" name="geboortedatum" placeholder="geboortedatum *" title="je geboortedatum"
-                       required="" type="date">
-                <input id="bsn" maxlength="9" minlength="8" name="bsn" placeholder="bsn *"
-                       title="je BSN (8 of 9 cijfers)" required="" type="text">
-                <br>
-                <p class="registratie">Adresgegevens:</p>
-                <input id="postcode" name="postcode" placeholder="postcode *" title="je postcode (AAAA11)" required=""
-                       maxlength="6" type="text">
-                <input id="huisnummer" name="huisnummer" placeholder="huisnummer *" title="je huisnummer" required=""
-                       type="text">
-                <input id="toevoeging" name="toevoeging" placeholder="toevoeging" maxlength="5"
-                       title="je eventuele huisnummertoevoeging" type="text">
-                <p class="registratie"></p>
-                <input id="straatnaam" name="straatnaam" placeholder="straatnaam" title="wordt automatisch ingevuld"
-                       required="" type="text">
-                <input id="woonplaats" name="woonplaats" placeholder="woonplaats" title="wordt automatisch ingevuld"
-                       required="" type="text">
-            </div>
-            <div class="grid_3">
-                <br>
-                <input id="registreren" name="registreren" type="submit" value="Registreren">
-                <br>
-            </div>
-        </form>
-    </div>
-
-    <!-- Opzet registratieLaag -->
-    <div id="registratieBevestiging" class="standaard registratieBevestiging">
-        <img class="avatarReg" alt="registratie-avatar" src="images/geregistreerd.gif">
-        <h1 id="registratieKop">Welkom DIVA!</h1>
-        <pre id="registratieInformatie"></pre>
-        <pre id="registratieTegoed">De  <span id="veelGeld">€100.000</span>  staat op je rekening!</pre>
-        <input id="bevestigingSluiten" type="submit" value="Super!">
-    </div>
-
-    <!-- javascript ivm aanvullen adresgegevens -->
-    <script defer src="js/adresAanvulling.js"></script>
-
     </body>
 </html>

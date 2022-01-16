@@ -5,13 +5,15 @@ package nl.hva.c25.team1.digivault.authentication;
 
 import nl.hva.c25.team1.digivault.model.Account;
 import nl.hva.c25.team1.digivault.model.Klant;
-import nl.hva.c25.team1.digivault.service.KlantService;
 import nl.hva.c25.team1.digivault.transfer.RegisterDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -19,17 +21,14 @@ import javax.validation.Valid;
 public class LoginController {
 
     private LoginService loginService;
-    private KlantService klantService;
 
     @Autowired
-    public LoginController(LoginService loginService, KlantService klantservice) {
+    public LoginController(LoginService loginService) {
         super();
         this.loginService = loginService;
-        this.klantService = klantservice;
     }
 
-    @CrossOrigin
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResponseEntity<String> loginHandler(@RequestBody Account account) {
         String token = loginService.login(account.getEmailadres(), account.getWachtwoord());
         if (token == null) {
@@ -37,7 +36,7 @@ public class LoginController {
         } else {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Bearer", token);
-            return new ResponseEntity<>("\"Login geslaagd!\"", headers, HttpStatus.OK);
+            return new ResponseEntity<>("Login geslaagd!", headers, HttpStatus.OK);
         }
     }
 

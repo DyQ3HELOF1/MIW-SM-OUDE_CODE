@@ -14,7 +14,7 @@ public interface PortefeuilleItemDAO {
 
     void updatePortefeuilleItem(PortefeuilleItem portefeuilleItem);
 
-    List<PortefeuilleItem> genereerPortefeuilleVanTransactiepartijMetId(int tpId);
+    List<PortefeuilleItem> genereerPortefeuilleVanKlantMetId(int klantId);
 
     PortefeuilleItem vindItemMetId(int itemId);
 

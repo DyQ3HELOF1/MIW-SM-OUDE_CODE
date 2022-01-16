@@ -1,10 +1,7 @@
 package nl.hva.c25.team1.digivault.service;
 
 import nl.hva.c25.team1.digivault.model.Account;
-import nl.hva.c25.team1.digivault.model.Klant;
-import nl.hva.c25.team1.digivault.repository.AccountDAO;
 import nl.hva.c25.team1.digivault.repository.JdbcAccountDAO;
-import nl.hva.c25.team1.digivault.repository.KlantDAO;
 import nl.hva.c25.team1.digivault.repository.RootRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,30 +17,30 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    private AccountDAO accountDAO;
-    private KlantDAO klantDAO;
+    private JdbcAccountDAO accountDAO;
+    private RootRepository rootRepository;
 
-    public AccountService(AccountDAO accountDAO, KlantDAO klantDAO) {
+    public AccountService(JdbcAccountDAO accountDAO/* , RootRepository rootRepository */) {
         this.accountDAO = accountDAO;
-        this.klantDAO = klantDAO;
+        //this.rootRepository = rootRepository;
     }
 
-//    public Account bewaarAccountMetSK(Account account) {
-//        return accountDAO.bewaarAccountMetSK(account);
-//    }
+    public Account bewaarAccountMetSK(Account account) {
+        return accountDAO.bewaarAccountMetSK(account);
+    }
 
-    public String updateAccount(Klant klant) {
-        if (klantDAO.vindKlantOpKlantId(klant.getTransactiepartijId()) == null) {
-            return "Klant bestaat niet, update mislukt.";
+    public String updateAccount(Account account) {
+        if (accountDAO.vindAccountOpAccountId(account.getAccountId()) == null ) {
+            return "Account bestaat niet, update mislukt.";
         } else {
-            accountDAO.updateAccount(klant);
+            accountDAO.updateAccount(account);
             return "Update geslaagd";
         }
     }
 
-//    public Account vindAccountOpAccountId(int accountId) {
-//        return accountDAO.vindAccountOpAccountId(accountId);
-//    }
+    public Account vindAccountOpAccountId(int accountId) {
+        return accountDAO.vindAccountOpAccountId(accountId);
+    }
 
     public List<Account> geefAlleAccounts() {
         return accountDAO.geefAlleAccounts();

@@ -66,8 +66,8 @@ public class JdbcRekeningDAO implements RekeningDAO{
 
     @Override
     public void updateRekening(Rekening rekening) {
-        String sql = "Update rekening Set saldo = ? WHERE rekeningId = ? ;";
-        jdbcTemplate.update(sql, rekening.getSaldo(), rekening.getRekeningId());
+        String sql = "Update rekening Set IBAN = ?, saldo = ? ;";
+        jdbcTemplate.update(sql, rekening.getIBAN(), rekening.getSaldo());
     }
 
     /**
@@ -88,18 +88,6 @@ public class JdbcRekeningDAO implements RekeningDAO{
     public Rekening vindRekeningOpId(int rekeningId) {
         String sql = "Select * From rekening Where rekeningId = ?";
         return jdbcTemplate.queryForObject(sql, new JdbcRekeningDAO.RekeningRowMapper(), rekeningId);
-    }
-
-    /**
-     *
-     * @author Anneke
-     * @param transactiepartijId
-     * @return
-     */
-    @Override
-    public Rekening vindRekeningOpTransactiePartijId(int transactiepartijId) {
-        String sql = "SELECT r.rekeningId, iban, saldo FROM rekening r JOIN transactiepartij t ON r.rekeningId = t.rekeningId WHERE tpId = ?";
-        return jdbcTemplate.queryForObject(sql, new JdbcRekeningDAO.RekeningRowMapper(), transactiepartijId);
     }
 
     /**

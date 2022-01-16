@@ -9,28 +9,24 @@ import java.util.List;
 
 @Repository
 public class RootRepository {
-
-    private KlantDAO klantDAO;
-    private RekeningDAO rekeningDAO;
-    private PortefeuilleItemDAO portefeuilleItemDAO;
-    private AdresDAO adresDAO;
-    private AssetDAO assetDAO;
-    private TransactieDAO transactieDAO;
-    private BankDAO bankDAO;
-    private EuroKoersDAO euroKoersDAO;
+    KlantDAO klantDAO;
+    RekeningDAO rekeningDAO;
+    AccountDAO accountDAO;
+    PortefeuilleItemDAO portefeuilleItemDAO;
+    NaamDAO naamDAO;
+    AdresDAO adresDAO;
+    AssetDAO assetDAO;
 
     @Autowired
-    public RootRepository(KlantDAO klantDAO, RekeningDAO rekeningDAO, PortefeuilleItemDAO portefeuilleItemDAO,
-                          AdresDAO adresDAO, AssetDAO assetDAO, TransactieDAO transactieDAO, BankDAO bankDAO,
-                          EuroKoersDAO euroKoersDAO) {
+    public RootRepository(KlantDAO klantDAO, RekeningDAO rekeningDAO, AccountDAO accountDAO,
+                          PortefeuilleItemDAO portefeuilleItemDAO, NaamDAO naamDAO, AdresDAO adresDAO, AssetDAO assetDAO) {
         this.klantDAO = klantDAO;
         this.rekeningDAO = rekeningDAO;
+        this.accountDAO = accountDAO;
         this.portefeuilleItemDAO = portefeuilleItemDAO;
+        this.naamDAO = naamDAO;
         this.adresDAO = adresDAO;
         this.assetDAO = assetDAO;
-        this.transactieDAO = transactieDAO;
-        this.bankDAO = bankDAO;
-        this.euroKoersDAO = euroKoersDAO;
     }
 
     // checked: Anthon 8-12-2021
@@ -45,13 +41,15 @@ public class RootRepository {
      * @return volledig geregistreerd klant object
      */
     public Klant slaKlantOp(Klant klant){
+        naamDAO.bewaarNaamMetSK(klant.getNaam());
         adresDAO.bewaarAdresMetSK(klant.getAdres());
+        accountDAO.bewaarAccountMetSK(klant.getAccount());
         rekeningDAO.bewaarRekeningMetSK(klant.getRekening());
         klantDAO.bewaarKlantMetSK(klant);
         klant.getAccount().setKlant(klant);//java
 
         for(PortefeuilleItem item : klant.getPortefeuille()){
-            item.getTransactiePartij().setTransactiepartijId(klant.getTransactiepartijId());
+            item.getKlant().setKlantId(klant.getKlantId());
             portefeuilleItemDAO.bewaarPortefeuilleItemMetKey(item);
         }
         return klant;
@@ -59,50 +57,21 @@ public class RootRepository {
 
     public Klant vindKlantOpId(int klantId) {
         Klant klant = klantDAO.vindKlantOpKlantId(klantId);
-        if (klant == null) return null;
-        List<PortefeuilleItem> itemsKlant = genereerPortefeuilleVanTransactiepartijMetId(klantId);
+        if (klant == null) {
+            return klant;
+        }
+        List<PortefeuilleItem> itemsKlant = portefeuilleItemDAO.genereerPortefeuilleVanKlantMetId(klantId);
         for (PortefeuilleItem portefeuilleItem: itemsKlant) {
-            portefeuilleItem.setTransactiePartij(klant);
+            portefeuilleItem.setKlant(klant);
         }
         klant.setPortefeuille(itemsKlant);
-        klant.setRekening(rekeningDAO.vindRekeningOpTransactiePartijId(klantId));
         return klant;
-    }
-
-    public List<PortefeuilleItem> genereerPortefeuilleVanTransactiepartijMetId(int tpId) {
-        List<PortefeuilleItem> itemsTransactiepartij = portefeuilleItemDAO
-                .genereerPortefeuilleVanTransactiepartijMetId(tpId);
-        for (PortefeuilleItem item: itemsTransactiepartij) {
-            Asset asset = assetDAO.vindAssetOpId(portefeuilleItemDAO.vindAssetIdVanPortefeuilleItem(item));
-            asset.setDagKoers(euroKoersDAO.vindMeestRecenteKoersAsset(asset).getKoers());
-            item.setAsset(asset);
-        }
-        return itemsTransactiepartij;
-    }
-
-    public Bank vindBankOpId(int bankId) {
-        Bank bank = bankDAO.vindBankOpId(bankId);
-        if (bank == null) return null;
-        List<PortefeuilleItem> itemsBank = genereerPortefeuilleVanTransactiepartijMetId(bankId);
-        for (PortefeuilleItem portefeuilleItem: itemsBank) {
-            portefeuilleItem.setTransactiePartij(bank);
-        }
-        bank.setPortefeuille(itemsBank);
-        bank.setRekening(rekeningDAO.vindRekeningOpId(bankDAO.vindRekeningIdVanBank(bank)));
-        return bank;
-    }
-
-    public Asset vindAssetOpId(int assetId) {
-        Asset asset = assetDAO.vindAssetOpId(assetId);
-        if (asset == null) return null;
-        asset.setDagKoers(euroKoersDAO.vindMeestRecenteKoersAsset(asset).getKoers());
-        return asset;
     }
 
     public PortefeuilleItem vindItemOpId(int itemId) {
         PortefeuilleItem portefeuilleItem = portefeuilleItemDAO.vindItemMetId(itemId);
         Klant klant = klantDAO.vindKlantOpKlantId(portefeuilleItemDAO.vindKlantIdVanPortefeuilleitem(portefeuilleItem));
-        portefeuilleItem.setTransactiePartij(klant);
+        portefeuilleItem.setKlant(klant);
         return portefeuilleItem;
     }
 
@@ -115,7 +84,7 @@ public class RootRepository {
      */
     public FinancieelOverzicht genereerFinancieelOverzichtOpId(int klantId) {
         FinancieelOverzicht financieelOverzicht = new FinancieelOverzicht(klantId);
-        Rekening rekening = rekeningDAO.vindRekeningOpTransactiePartijId(klantId);
+        Rekening rekening = rekeningDAO.vindRekeningOpId(klantId);
         financieelOverzicht.setIban(rekening.getIBAN());
         financieelOverzicht.setSaldo(rekening.getSaldo());
         financieelOverzicht.setAssetMetAantal(genereerPortefeuilleOverzicht(klantId));
@@ -131,7 +100,9 @@ public class RootRepository {
      */
     public List<AssetMetAantal> genereerPortefeuilleOverzicht(int klantId) {
         List<AssetMetAantal> portefeuilleOverzicht = new ArrayList<>();
-        for (PortefeuilleItem portefeuilleItem : genereerPortefeuilleVanTransactiepartijMetId(klantId)) {
+        for (PortefeuilleItem portefeuilleItem : portefeuilleItemDAO.genereerPortefeuilleVanKlantMetId(klantId)) {
+            portefeuilleItem.setAsset(assetDAO.vindAssetOpId(portefeuilleItemDAO.vindAssetIdVanPortefeuilleItem
+                    (portefeuilleItem)));
             AssetMetAantal overzicht = new AssetMetAantal();
             overzicht.setAssetId(portefeuilleItem.getAsset().getAssetId());
             overzicht.setAfkorting(portefeuilleItem.getAsset().getAfkorting());
@@ -142,23 +113,4 @@ public class RootRepository {
         }
         return portefeuilleOverzicht;
     }
-
-    public Transactie voerTransactieUit(Transactie transactie) {
-        TransactiePartij koper = transactie.getKoper();
-        TransactiePartij verkoper = transactie.getVerkoper();
-        rekeningDAO.updateRekening(verkoper.getRekening());
-        rekeningDAO.updateRekening(koper.getRekening());
-        for (PortefeuilleItem portefeuilleItem : koper.getPortefeuille()) {
-            if (portefeuilleItem.getAsset().getAfkorting().equals(transactie.getAsset().getAfkorting())) {
-                portefeuilleItemDAO.updatePortefeuilleItem(portefeuilleItem);
-            }
-        }
-        for (PortefeuilleItem portefeuilleItem : verkoper.getPortefeuille()) {
-            if (portefeuilleItem.getAsset().getAfkorting().equals(transactie.getAsset().getAfkorting())) {
-                portefeuilleItemDAO.updatePortefeuilleItem(portefeuilleItem);
-            }
-        }
-        return transactieDAO.bewaarTransacktieMetSK(transactie);
-    }
-
 }

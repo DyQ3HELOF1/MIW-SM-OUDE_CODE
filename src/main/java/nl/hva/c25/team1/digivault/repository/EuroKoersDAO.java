@@ -1,9 +1,7 @@
 package nl.hva.c25.team1.digivault.repository;
 
-import nl.hva.c25.team1.digivault.model.Asset;
 import nl.hva.c25.team1.digivault.model.EuroKoers;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -22,7 +20,4 @@ public interface EuroKoersDAO {
     List<EuroKoers> geefAlleEuroKoersen();
 
     void update(EuroKoers euroKoers);
-
-    EuroKoers vindMeestRecenteKoersAsset(Asset asset);
-
 }

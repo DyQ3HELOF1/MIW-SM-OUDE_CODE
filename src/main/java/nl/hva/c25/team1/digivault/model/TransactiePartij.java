@@ -8,26 +8,18 @@ import java.util.List;
  */
 
 public abstract class TransactiePartij {
-    private int transactiepartijId;
+    private int transactiePartijId;
     private Rekening rekening;
     private List<PortefeuilleItem> portefeuille;
 
-    protected TransactiePartij(int transactiepartijId, Rekening rekening, List<PortefeuilleItem> portefeuille) {
-        setTransactiepartijId(transactiepartijId);
-        this.rekening = rekening;
-        this.portefeuille = portefeuille;
+
+
+    public int getTransactiePartijId() {
+        return transactiePartijId;
     }
 
-    public int getTransactiepartijId() {
-        return transactiepartijId;
-    }
-
-    public void setTransactiepartijId(int transactiepartijId) throws IllegalArgumentException {
-        if (transactiepartijId >= 0) {
-            this.transactiepartijId = transactiepartijId;
-        } else {
-            throw new IllegalArgumentException("Het ID van een transactiepartij moet een positief geheel getal zijn!");
-        }
+    public void setTransactiePartijId(int transactiePartijId) {
+        this.transactiePartijId = transactiePartijId;
     }
 
     public Rekening getRekening() {

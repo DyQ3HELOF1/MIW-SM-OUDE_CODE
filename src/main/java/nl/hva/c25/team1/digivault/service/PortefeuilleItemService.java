@@ -35,7 +35,7 @@ public class PortefeuilleItemService {
      * @return De gehele portefeuille.
      */
     public List<PortefeuilleItem> genereerPortefeuilleVanKlantMetId(int klantId) {
-        return portefeuilleItemDAO.genereerPortefeuilleVanTransactiepartijMetId(klantId);
+        return portefeuilleItemDAO.genereerPortefeuilleVanKlantMetId(klantId);
     }
 
     /**
@@ -52,7 +52,6 @@ public class PortefeuilleItemService {
        for (PortefeuilleItem portefeuilleItem : transactie.getVerkoper().getPortefeuille()) {
            if (portefeuilleItem.getAsset() == transactie.getAsset()) {
                portefeuilleItem.setHoeveelheid(portefeuilleItem.getHoeveelheid()-transactie.getAantalCryptos());
-               portefeuilleItemDAO.updatePortefeuilleItem(portefeuilleItem);
            }
        }
     }
@@ -61,7 +60,6 @@ public class PortefeuilleItemService {
         for (PortefeuilleItem portefeuilleItem : transactie.getKoper().getPortefeuille()) {
             if (portefeuilleItem.getAsset() == transactie.getAsset()) {
                 portefeuilleItem.setHoeveelheid(portefeuilleItem.getHoeveelheid()+ transactie.getAantalCryptos());
-                portefeuilleItemDAO.updatePortefeuilleItem(portefeuilleItem);
             }
         }
     }

@@ -4,9 +4,6 @@ import nl.hva.c25.team1.digivault.model.Account;
 import nl.hva.c25.team1.digivault.model.Klant;
 import nl.hva.c25.team1.digivault.repository.JdbcAccountDAO;
 import nl.hva.c25.team1.digivault.repository.JdbcKlantDAO;
-import nl.hva.c25.team1.digivault.repository.KlantDAO;
-import nl.hva.c25.team1.digivault.repository.RootRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,13 +21,14 @@ import java.util.Objects;
 @Service
 public class KlantService {
 
-    private KlantDAO klantDAO;
-    private RootRepository rootRepository;
+    private JdbcKlantDAO klantDAO;
 
-    @Autowired
-    public KlantService(JdbcKlantDAO klantDAO, RootRepository rootRepository) {
+    /**
+     *
+     * @param klantDAO interface klantDAO
+     */
+    public KlantService(JdbcKlantDAO klantDAO) {
         this.klantDAO = klantDAO;
-        this.rootRepository = rootRepository;
     }
 
     /**
@@ -43,15 +41,11 @@ public class KlantService {
 
     /**
      *
-     * @param klantId van klant die gevonden moet worden
+     * @param klandId van klant die gevonden moet worden
      * @return Klant
      */
-    public Klant vindKlantOpKlantID(int klantId) {
-        return rootRepository.vindKlantOpId(klantId);
-    }
-
-    public Klant vindKlantOpEmail(String emailadres) {
-        return klantDAO.vindKlantOpEmailadres(emailadres);
+    public Klant vindKlantOpKlantID(int klandId) {
+        return klantDAO.vindKlantOpKlantId(klandId);
     }
 
     /**
@@ -59,7 +53,6 @@ public class KlantService {
      * @return List<Klant>
      */
     public List<Klant> vindAlleKlanten() {
-        System.out.println("service");
         return klantDAO.vindAlleKlanten();
     }
 
@@ -70,7 +63,7 @@ public class KlantService {
      * @return String melding die aangeeft of update geslaagd is
      */
     public String updateKlant(Klant klant) {
-        if (klantDAO.vindKlantOpKlantId(klant.getTransactiepartijId()) == null ) {
+        if (klantDAO.vindKlantOpKlantId(klant.getKlantId()) == null ) {
             return "Klant bestaat niet, update mislukt.";
         } else {
             klantDAO.update(klant);

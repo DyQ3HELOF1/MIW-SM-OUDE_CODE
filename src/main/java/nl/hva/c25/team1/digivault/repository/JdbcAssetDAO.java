@@ -43,7 +43,7 @@ public class JdbcAssetDAO implements AssetDAO {
      */
     @Override
     public Asset bewaarAssetMetSK(Asset asset) {
-        String sql = "INSERT INTO asset (afkorting, naam) VALUES (?, ?)";
+        String sql = "INSERT INTO asset (afkorting, naam, dagkoers) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
@@ -51,6 +51,7 @@ public class JdbcAssetDAO implements AssetDAO {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, asset.getAfkorting());
                 preparedStatement.setString(2, asset.getNaam());
+                preparedStatement.setDouble(3, asset.getDagKoers());
                 return preparedStatement;
             }
         }, keyHolder);
@@ -91,15 +92,15 @@ public class JdbcAssetDAO implements AssetDAO {
      */
     @Override
     public void update(Asset asset) {
-        String sql = "UPDATE asset SET assetId = ?, afkorting = ?, naam = ? ";
-        jdbcTemplate.update(sql, asset.getAfkorting(), asset.getNaam());
+        String sql = "UPDATE asset SET assetId = ?, afkorting = ?, naam = ?, dagkoers = ? ";
+        jdbcTemplate.update(sql, asset.getAfkorting(), asset.getNaam(), asset.getDagKoers());
     }
 
     private class AssetRowMapper implements RowMapper<Asset> {
         @Override
         public Asset mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
             return new Asset(resultSet.getInt("assetId"), resultSet.getString("afkorting"),
-                    resultSet.getString("naam"));
+                    resultSet.getString("naam"), resultSet.getDouble("dagkoers"));
         }
     }
 }

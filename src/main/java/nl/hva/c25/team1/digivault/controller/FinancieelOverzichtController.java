@@ -7,7 +7,10 @@ import nl.hva.c25.team1.digivault.service.FinancieelOverzichtService;
 import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -41,16 +44,16 @@ public class FinancieelOverzichtController {
      * @param klantId id waarop gezocht wordt
      * @return een FinancieelOverzicht
      */
-    @CrossOrigin
     @GetMapping("/financieeloverzicht/{klantId}")
     public ResponseEntity<FinancieelOverzicht> vindFinancieelOverzicht(@PathVariable int klantId,
                                                                        @RequestHeader("Authorization") String token) {
-//        boolean authorized = tokenService.getEmailadresToken(token).equals(accountService.vindAccountOpKlantId(klantId).
-//                getEmailadres());
-        if (/*tokenService.valideerJWT(token) && authorized*/true) {
+        boolean authorized = tokenService.getEmailadresToken(token).equals(accountService.vindAccountOpKlantId(klantId).
+                getEmailadres());
+        if (tokenService.valideerJWT(token) && authorized) {
             return ResponseEntity.ok(financieelOverzichtService.genereerFinancieelOverzicht(klantId));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
 }

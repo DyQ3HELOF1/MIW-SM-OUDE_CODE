@@ -1,7 +1,6 @@
 package nl.hva.c25.team1.digivault.repository;
 
 import nl.hva.c25.team1.digivault.model.Account;
-import nl.hva.c25.team1.digivault.model.Klant;
 
 import java.util.List;
 
@@ -16,11 +15,11 @@ import java.util.List;
 
 public interface AccountDAO {
 
-//    Account bewaarAccountMetSK(Account account);
+    Account bewaarAccountMetSK(Account account);
 
-    void updateAccount(Klant klant);
+    void updateAccount(Account account);
 
-//    Account vindAccountOpAccountId(int accountId);
+    Account vindAccountOpAccountId(int accountId);
 
     Account vindAccountOpEmailAdres(String emailAdres);
 

@@ -19,12 +19,8 @@ public interface KlantDAO {
 
     Klant vindKlantOpKlantId(int klantId);
 
-    Klant vindKlantOpEmailadres(String email);
-
     List<Klant> vindAlleKlanten();
 
     void update(Klant klant);
-
-    int vindRekeningIdVanKlant(Klant klant);
 
 }

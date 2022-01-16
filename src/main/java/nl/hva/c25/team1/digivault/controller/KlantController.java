@@ -29,13 +29,12 @@ public class KlantController {
     }
 
     @GetMapping("/klanten/{klantId}")
-    public Klant vindKlantopKlantIdHandler(@PathVariable int klantId) {
+    public Klant vindKlantopGebruikersnaamHandler(@PathVariable int klantId) {
         return klantService.vindKlantOpKlantID(klantId);
     }
 
     @GetMapping("/klanten")
     public List<Klant> vindKlantenHandler() {
-        System.out.println("controller");
         return klantService.vindAlleKlanten();
     }
 

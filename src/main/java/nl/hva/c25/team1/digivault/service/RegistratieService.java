@@ -64,13 +64,10 @@ public class RegistratieService {
             klant.setPortefeuille(aanmaakLegePortefeuille());
             Account account = klant.getAccount();
             account.setWachtwoord(hashService.hash(account.getWachtwoord()));
-            boolean b1 = validateBsn(klant.getBsn());
-            boolean b2 = validatieGeboortedatum(klant.getGeboortedatum());
-//            boolean b3 = validatieMailadres(klant.getAccount().getEmailadres());
-
-            if (b1
-                     && b2
-//                      && b3
+            if (
+                    validateBsn(klant.getBsn()) &&
+                    validatieGeboortedatum(klant.getGeboortedatum())  &&
+                    validatieMailadres(klant.getAccount().getEmailadres())
             ) {
                 return rootRepository.slaKlantOp(klant);
             } else {
@@ -91,7 +88,7 @@ public class RegistratieService {
         for (Asset asset: assetService.geefAlleAssets()) {
             PortefeuilleItem portefeuilleItem = new PortefeuilleItem(0);
             portefeuilleItem.setAsset(asset);
-            portefeuilleItem.setTransactiePartij(new Klant(0));
+            portefeuilleItem.setKlant(new Klant(0));
             legePortefeuille.add(portefeuilleItem);
         }
         return legePortefeuille;
@@ -123,6 +120,7 @@ public class RegistratieService {
      * methode om te checken of de ingevoerde bsn correct is
      * @param bsn
      */
+
     public boolean validateBsn (String bsn ){
         int bsnInt = Integer.valueOf(bsn);
 

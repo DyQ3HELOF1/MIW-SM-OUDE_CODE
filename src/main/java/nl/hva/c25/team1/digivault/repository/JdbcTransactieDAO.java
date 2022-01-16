@@ -9,18 +9,19 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Nienke
- * @author Anthon
+ * Author Nienke
+ * Version 14-12-2021
  */
 
-@Repository
+
 public class JdbcTransactieDAO implements TransactieDAO {
     JdbcTemplate jdbcTemplate;
 
@@ -33,19 +34,19 @@ public class JdbcTransactieDAO implements TransactieDAO {
 
     @Override
     public Transactie bewaarTransacktieMetSK(Transactie transactie) {
-        String sql = "INSERT INTO transactie(koperId, verkoperId, assetId, aantal, datum, tijdstip) " +
+        String sql = "INSERT INTO transactie(koper, verkoper, transactieDatum, transactieTijd, asset, aantalCryptos) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, transactie.getKoper().getTransactiepartijId());
-                ps.setInt(2,transactie.getVerkoper().getTransactiepartijId());
-                ps.setInt(3,transactie.getAsset().getAssetId());
-                ps.setDouble(4,transactie.getAantalCryptos());
-                ps.setDate(5, Date.valueOf(transactie.getTransactieDatum()));
-                ps.setTime(6,Time.valueOf(transactie.getTransactieTijd()));
+                ps.setInt(1, transactie.getKoper().getTransactiePartijId());
+                ps.setInt(2,transactie.getVerkoper().getTransactiePartijId());
+                ps.setDate(3, Date.valueOf(transactie.getTransactieDatum()));
+                ps.setTime(4,Time.valueOf(transactie.getTransactieTijd()));
+                ps.setInt(5,transactie.getAsset().getAssetId());
+                ps.setDouble(6,transactie.getAantalCryptos());
                 return ps;
             }
         } , keyHolder);
@@ -54,19 +55,18 @@ public class JdbcTransactieDAO implements TransactieDAO {
     }
 /*haal een transactie op aan de hand van transactieId*/
     @Override
-    public Transactie vindTransactieOpTransactieId(int transactieId) {
+    public Transactie vindTrasactieopTransactieId(int transactieId) {
         String sql = "SELECT * FROM transactie WHERE transactieId = ? ";
         Transactie transactie;
-        System.out.println("transactie start");
         try {
             transactie = jdbcTemplate.queryForObject(sql, new TransactieRowMapper(), transactieId);
-        } catch (EmptyResultDataAccessException noResult) {
+        } catch (EmptyResultDataAccessException noRestult) {
             transactie = null;
         }
-        System.out.println("transactie eind");
         return transactie;
     }
-
+// geprobeerd te maken; geeft een verkoper mee, en krijgt terug een lijst met transacites,
+    //snap niet hoe hij een lijst kan terug geven/of lijst maken... help..
     @Override
     public List<Transactie> vindAlleTransactiesOpVerkoper(TransactiePartij verkoper){
         String sql = "SELECT * FROM transactie WHERE verkoper = ? ";
@@ -76,10 +76,13 @@ public class JdbcTransactieDAO implements TransactieDAO {
             return null;
         }
     }
+    // geprobeerd te maken; geeft een koper mee, en krijgt terug een lijst met transacites,
+    //snap niet hoe hij een lijst kan terug geven. help..
 
     @Override
     public List<Transactie> vindAlleTransactiesOpKoper(TransactiePartij koper){
         String sql = "SELECT * FROM transactie WHERE koper = ? ";
+
         try {
             return jdbcTemplate.query(sql, new TransactieRowMapper(), koper);
         } catch (EmptyResultDataAccessException noResult) {
@@ -90,12 +93,10 @@ public class JdbcTransactieDAO implements TransactieDAO {
         private class TransactieRowMapper implements RowMapper<Transactie> {
             @Override
             public Transactie mapRow(ResultSet resultSet, int RowNumber) throws SQLException {
-                Transactie transactie = new Transactie(
+                return new Transactie(resultSet.getInt("transactieId"),
                         LocalDate.parse(resultSet.getString("transactieDatum")),
                         LocalTime.parse(resultSet.getString("transactieTijd")),
-                        resultSet.getDouble("aantalCryptos"));
-                transactie.setTransactieId(resultSet.getInt("transactieId"));
-                return transactie;
+                                resultSet.getDouble("aantalCryptos"));
             }
         }
     }

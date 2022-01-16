@@ -48,14 +48,14 @@ public class JdbcPortefeuilleItemDAO implements PortefeuilleItemDAO {
      */
     @Override
     public PortefeuilleItem bewaarPortefeuilleItemMetKey(PortefeuilleItem portefeuilleItem) {
-        String sql = "INSERT INTO portefeuille_item (aantal, tpId, assetId) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO portefeuille_item (aantal, klantId, assetId) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setDouble(1, portefeuilleItem.getHoeveelheid());
-                ps.setInt(2, portefeuilleItem.getTransactiePartij().getTransactiepartijId());
+                ps.setInt(2, portefeuilleItem.getKlant().getKlantId());
                 ps.setInt(3, portefeuilleItem.getAsset().getAssetId());
                 return ps;
             }
@@ -67,13 +67,13 @@ public class JdbcPortefeuilleItemDAO implements PortefeuilleItemDAO {
     /**
      * Deze methode geeft de lijst terug van alle items uit de portefeuille van de klant met opgegeven Id.
      *
-     * @param tpId Het Id van de betreffende transactiepartij.
+     * @param klantId Het Id van de betreffende klant.
      * @return De complete portefeuille als lijst van items.
      */
     @Override
-    public List<PortefeuilleItem> genereerPortefeuilleVanTransactiepartijMetId(int tpId) {
-        String sql = "SELECT * FROM portefeuille_item WHERE tpId = ?";
-        return jdbcTemplate.query(sql, new PortefeuilleItemRowMapper(), tpId);
+    public List<PortefeuilleItem> genereerPortefeuilleVanKlantMetId(int klantId) {
+        String sql = "SELECT * FROM portefeuille_item WHERE klantId = ?";
+        return jdbcTemplate.query(sql, new PortefeuilleItemRowMapper(), klantId);
     }
 
     /**
@@ -107,7 +107,7 @@ public class JdbcPortefeuilleItemDAO implements PortefeuilleItemDAO {
 
     @Override
     public int vindKlantIdVanPortefeuilleitem(PortefeuilleItem portefeuilleItem) {
-        String sql = "SELECT tpId FROM portefeuille_item WHERE itemId = ?";
+        String sql = "SELECT klantId FROM portefeuille_item WHERE itemId = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, portefeuilleItem.getPortefeuilleItemId());
     }
 

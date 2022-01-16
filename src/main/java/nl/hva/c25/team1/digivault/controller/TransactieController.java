@@ -1,64 +1,47 @@
 package nl.hva.c25.team1.digivault.controller;
 
-import nl.hva.c25.team1.digivault.authentication.TokenService;
-import nl.hva.c25.team1.digivault.model.*;
-import nl.hva.c25.team1.digivault.service.*;
-import nl.hva.c25.team1.digivault.transfer.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import nl.hva.c25.team1.digivault.model.Klant;
+import nl.hva.c25.team1.digivault.model.Transactie;
+import nl.hva.c25.team1.digivault.model.TransactiePartij;
+import nl.hva.c25.team1.digivault.service.KlantService;
+import nl.hva.c25.team1.digivault.service.TransactieService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
- * Deze controller handelt requests af met betrekking tot transacties.
- *
- * @author Nienke
- * @author Anthon
+ * Author Nienke
+ * Version 14-12-2021
  */
-@RestController
-@RequestMapping("/transactie/")
+
 public class TransactieController {
 
     private TransactieService transactieService;
-    private TokenService tokenService;
-    private AccountService accountService;
 
-    @Autowired
-    public TransactieController(TransactieService transactieService, TokenService tokenService,
-                                AccountService accountService) {
+    public TransactieController(TransactieService transactieService) {
         this.transactieService = transactieService;
-        this.tokenService = tokenService;
-        this.accountService = accountService;
     }
 
-    /*
-     * Deze request-handler verwerkt een transactie. Eerst worden authenticatie en autorisatie gecheckt; vervolgens
-     * wordt de DTO doorgezet voor verwerking.
-     */
-    @PostMapping("{klantId}")
-    public String transactieHandler(
-            @PathVariable int klantId, @RequestHeader("Authorization") String token,
-            @RequestBody TransactieDTO transactieDTO) {
-        boolean authorized = tokenService.getEmailadresToken(token).equals(accountService.vindAccountOpKlantId(klantId).
-                getEmailadres());
-        if (tokenService.valideerJWT(token) && authorized)
-            return probeerTransactieOmTeZettenEnUitTeVoeren(transactieDTO);
-        return "not authorized";
+    @PostMapping("/transactie")
+    public Transactie bewaarTransactie(@RequestBody Transactie transactie) {
+        transactieService.bewaarTransactie(transactie);
+        return transactie;
     }
 
-    /*
-     * Deze methode probeert de DTO om te zetten naar een transactie-object. Vervolgens wordt deze transactie
-     * doorgegeven aan de service-laag.
-     */
-    String probeerTransactieOmTeZettenEnUitTeVoeren(TransactieDTO transactieDTO) {
-        TransactieMapper transactieMapper = new TransactieMapper();
-        Transactie transactie;
-        try {
-            transactie = transactieMapper.toObject(transactieDTO);
-        }
-        catch(IllegalArgumentException illegalArgumentException) {
-            return illegalArgumentException.getMessage();
-        }
-        transactieService.voerTransactieUit(transactie);
-        if (transactie == null) return "transaction failed";
-        return "transaction executed";
+    @GetMapping("/transactie/{transactieId}")
+    public Transactie vindTrasactieopTransactieIdHandler(@PathVariable int transactieId) {
+        return transactieService.vindTrasactieopTransactieId(transactieId);
+    }
+
+    @GetMapping("/transactie/{verkoper}")
+    public List<Transactie> vindAlleTransactiesOpVerkoperHandler(@PathVariable TransactiePartij verkoper){
+        return transactieService.vindAlleTransactiesOpVerkoper(verkoper);
+    }
+    @GetMapping("/transactie/{koper}")
+    public List<Transactie> vindAlleTransactiesOpKoperHandler(@PathVariable TransactiePartij koper){
+        return transactieService.vindAlleTransactiesOpKoper(koper);
     }
 }
